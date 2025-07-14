@@ -1,0 +1,140 @@
+-- 1. How are total sales performing year over year?
+SELECT YEAR_ID, 
+       SUM(SALES) AS total_sales
+FROM sales_data_sample
+GROUP BY YEAR_ID
+ORDER BY YEAR_ID;
+
+-- 2. What is the monthly trend? Are there seasonal patterns?
+SELECT YEAR_ID, 
+       MONTH_ID, 
+       SUM(SALES) AS monthly_sales
+FROM sales_data_sample
+GROUP BY YEAR_ID, MONTH_ID
+ORDER BY YEAR_ID, MONTH_ID;
+
+-- 3. Which countries are driving the highest sales?
+SELECT COUNTRY, 
+       SUM(SALES) AS total_sales
+FROM sales_data_sample
+GROUP BY COUNTRY
+ORDER BY total_sales DESC;
+
+-- 4. How do sales vary by deal size and order status?
+SELECT DEALSIZE, 
+       STATUS, 
+       SUM(SALES) AS total_sales
+FROM sales_data_sample
+GROUP BY DEALSIZE, STATUS
+ORDER BY DEALSIZE, STATUS;
+
+-- 5. What are the best-selling product lines?
+SELECT PRODUCTLINE, 
+       SUM(SALES) AS total_sales
+FROM sales_data_sample
+GROUP BY PRODUCTLINE
+ORDER BY total_sales DESC;
+
+-- 6. How does the sales value differ by product line?
+SELECT PRODUCTLINE, 
+       SUM(SALES) AS total_sales,
+       AVG(SALES) AS avg_sales_per_order
+FROM sales_data_sample
+GROUP BY PRODUCTLINE
+ORDER BY total_sales DESC;
+
+-- 7. Who are the top customers?
+SELECT CUSTOMERNAME, 
+       SUM(SALES) AS total_sales
+FROM sales_data_sample
+GROUP BY CUSTOMERNAME
+ORDER BY total_sales DESC
+LIMIT 10;
+
+-- 8. Are there location-based insights (e.g., top cities)?
+SELECT 
+    CITY, 
+    COUNTRY, 
+    SUM(SALES) AS total_sales 
+FROM 
+    sales_data_sample 
+WHERE 
+    COUNTRY = 'USA' 
+GROUP BY 
+    CITY, COUNTRY 
+ORDER BY 
+    total_sales DESC 
+LIMIT 10;
+
+
+-- who is our best customer (this could be best answered with RFM)
+WITH rfm AS (
+    SELECT 
+        CUSTOMERNAME,  
+        SUM(sales) AS MonetaryValue,  
+        AVG(sales) AS AvgMonetaryValue,  
+        COUNT(ordernumber) AS Frequency,  
+        MAX(STR_TO_DATE(ORDERDATE, '%m/%d/%Y')) AS Last_Order_Date,
+        DATEDIFF(
+            (SELECT MAX(STR_TO_DATE(ORDERDATE, '%m/%d/%Y')) FROM sales_data_sample WHERE ORDERDATE IS NOT NULL),
+            MAX(STR_TO_DATE(ORDERDATE, '%m/%d/%Y'))
+        ) AS Recency
+    FROM 
+        victoria.sales_data_sample
+    GROUP BY 
+        CUSTOMERNAME
+),
+rfm_calc AS (
+    SELECT 
+        CUSTOMERNAME,
+        Recency,
+        Frequency,
+        MonetaryValue,
+        NTILE(4) OVER (ORDER BY Recency DESC) AS rfm_recency,
+        NTILE(4) OVER (ORDER BY Frequency) AS rfm_frequency,
+        NTILE(4) OVER (ORDER BY MonetaryValue) AS rfm_monetary
+    FROM rfm
+)
+SELECT 
+    CUSTOMERNAME,
+    Recency,
+    Frequency,
+    MonetaryValue,
+    rfm_recency,
+    rfm_frequency,
+    rfm_monetary,
+    CONCAT(rfm_recency, rfm_frequency, rfm_monetary) AS RFM_Score,
+     (rfm_recency + rfm_frequency + rfm_monetary) AS RFM_Total,
+     -- Segment based on RFM total
+ CASE
+        WHEN (rfm_recency + rfm_frequency + rfm_monetary) >= 10 THEN 'VIP'
+        WHEN (rfm_recency + rfm_frequency + rfm_monetary) BETWEEN 7 AND 9 THEN 'Loyal'
+        WHEN (rfm_recency + rfm_frequency + rfm_monetary) BETWEEN 4 AND 6 THEN 'At Risk'
+        ELSE 'Churned'
+    END AS Customer_Segment_by_total,
+    -- Segment based on RFM Score string
+    CASE
+        WHEN CONCAT(rfm_recency, rfm_frequency, rfm_monetary) IN ('444', '443', '434', '344') THEN 'Champions'
+        WHEN rfm_recency = 4 AND rfm_frequency >= 3 THEN 'Loyal Customers'
+        WHEN rfm_frequency = 4 AND rfm_monetary >= 3 THEN 'Big Spenders'
+        WHEN rfm_recency = 1 AND rfm_frequency <= 2 THEN 'At Risk'
+        WHEN CONCAT(rfm_recency, rfm_frequency, rfm_monetary) = '111' THEN 'Churned'
+        ELSE 'Others'
+    END AS Segment_By_Score
+
+FROM rfm_calc
+ORDER BY RFM_Total DESC;
+
+
+
+
+WITH customer_orders AS (
+    SELECT CUSTOMERNAME, COUNTRY, COUNT(DISTINCT ORDERNUMBER) AS num_orders
+    FROM sales_data_sample
+    GROUP BY CUSTOMERNAME, COUNTRY
+)
+SELECT COUNTRY, ROUND(AVG(num_orders), 2) AS avg_orders_per_customer
+FROM customer_orders
+GROUP BY COUNTRY
+ORDER BY avg_orders_per_customer DESC;
+
