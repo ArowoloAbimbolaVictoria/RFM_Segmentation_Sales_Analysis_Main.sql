@@ -56,7 +56,7 @@ GROUP BY YEAR_ID, MONTH_ID
 ORDER BY YEAR_ID, MONTH_ID;
 ```
 
-🔄 Seasonality observed: Q4 consistently performed best.
+✅ Seasonality observed: Q4 consistently performed best.
 
 ---
 
@@ -70,7 +70,7 @@ GROUP BY COUNTRY
 ORDER BY total_sales DESC;
 ```
 
-🌍 USA led in total sales, followed by France and UK.
+✅ USA led in total sales, followed by France and UK.
 
 ---
 
@@ -83,7 +83,7 @@ GROUP BY DEALSIZE, STATUS
 ORDER BY DEALSIZE, STATUS;
 ```
 
-🔍 Medium and Large deals were the biggest contributors.
+✅ Medium and Large deals were the biggest contributors.
 
 ---
 
@@ -96,7 +96,7 @@ GROUP BY PRODUCTLINE
 ORDER BY total_sales DESC;
 ```
 
-🏆 Classic Cars outperformed other product lines.
+✅ Classic Cars outperformed other product lines.
 
 ---
 
@@ -111,7 +111,7 @@ GROUP BY PRODUCTLINE
 ORDER BY total_sales DESC;
 ```
 
-📈 High-value orders were seen in Classic Cars and Vintage Cars.
+✅ High-value orders were seen in Classic Cars and Vintage Cars.
 
 ---
 
@@ -125,7 +125,7 @@ ORDER BY total_sales DESC
 LIMIT 10;
 ```
 
-💰 Top 10 customers accounted for a large chunk of sales.
+✅ Top 10 customers accounted for a large chunk of sales.
 
 ---
 
@@ -140,7 +140,7 @@ ORDER BY total_sales DESC
 LIMIT 10;
 ```
 
-🏙️ New York, Chicago, and Los Angeles led US city sales.
+✅ New York, Chicago, and Los Angeles led US city sales.
 
 ---
 
@@ -209,7 +209,7 @@ GROUP BY COUNTRY
 ORDER BY avg_orders_per_customer DESC;
 ```
 
-📦 Average orders per customer were highest in top-performing countries.
+✅ Average orders per customer were highest in top-performing countries.
 More orders per customer = higher lifetime value. Some countries outperform others.
 
 
