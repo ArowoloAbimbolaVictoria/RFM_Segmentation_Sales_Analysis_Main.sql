@@ -3,6 +3,26 @@
 
 Understanding sales performance is very important to making smarter business decisions. I analyzed the sales data to uncover trends, identify top-performing products and customers, and segment customers based on behavior using RFM analysis.
 
+### Problem Statement
+
+The objective was to analyze sales performance data to uncover trends, identify top-performing products and customers, and segment customers based on purchasing behavior using the RFM (Recency, Frequency, Monetary) model. This empowers the business to make smarter decisions around marketing, customer retention, product strategy, and regional focus.
+
+### Data Preparation:
+
+The dataset (sales_data_sample.csv) contains sales transactions across multiple years, with fields like order date, country, customer name, deal size, product line, and sales amount.
+
+* Loaded the CSV file into a SQL-compatible environment.
+* Cleaned and explored the data:
+* Verified formats for dates and numeric fields
+* Checked for missing or inconsistent values
+* Ensured data types were query-friendly (e.g., dates, decimals, etc.)
+
+Used SQL to perform:
+* Yearly and monthly sales trend analysis
+* Product and country-based performance analysis
+* RFM-based customer segmentation
+* Top customer and city performance insights
+
 ### Key Insights
 
 * Sales grew steadily from 2003 to 2005
