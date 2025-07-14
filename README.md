@@ -32,7 +32,7 @@ Used SQL to perform:
 * Top 10 customers contributed significantly to total revenue
 * RFM analysis revealed a strong group of VIP and loyal customers
 
-**The Goal?** Provide business intelligence on sales trends, customer behavior, and product performance to improve marketing, sales strategies, and customer retention.
+**The Goal** is to Provide business intelligence on sales trends, customer behavior, and product performance to improve marketing, sales strategies, and customer retention.
 
 ---
 
